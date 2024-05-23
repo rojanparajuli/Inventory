@@ -1,32 +1,39 @@
 import 'package:get/get.dart';
-import 'package:inventory/data/database_helper.dart';
+import 'package:get_storage/get_storage.dart';
 
 class ItemController extends GetxController {
   var items = [].obs;
-  final DatabaseHelper _dbHelper = DatabaseHelper();
+  final storage = GetStorage();
 
   @override
   void onInit() {
     super.onInit();
-    _refreshItems();
+    _loadItems();
   }
 
-  Future<void> _refreshItems() async {
-    final data = await _dbHelper.getItems();
-    items.value = data;
+  void _loadItems() {
+    List<dynamic>? storedItems = storage.read<List>('items');
+    if (storedItems != null) {
+      items.value = storedItems;
+    }
   }
 
-  Future<int> addItem(String name, int quantity, ) async {
-    int id = await _dbHelper.insertItem({
+  void _saveItems() {
+    storage.write('items', items.toList());
+  }
+
+  void addItem(String name, int quantity) {
+    int id = DateTime.now().millisecondsSinceEpoch; //  unique ID..................
+    items.add({
+      'id': id,
       'name': name,
       'quantity': quantity,
     });
-    _refreshItems();
-    return id;
+    _saveItems();
   }
 
-  Future<void> deleteItem(int id) async {
-    await _dbHelper.deleteItem(id);
-    _refreshItems();
+  void deleteItem(int id) {
+    items.removeWhere((item) => item['id'] == id);
+    _saveItems();
   }
 }
