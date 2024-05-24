@@ -14,7 +14,8 @@ class InventoryPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Inventory App'),
+        title: const Center(child: Text('Dashboard')),
+        automaticallyImplyLeading: false,
       ),
       body: Column(
         children: [
