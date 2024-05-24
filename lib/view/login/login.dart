@@ -99,7 +99,7 @@ class LoginScreen extends StatelessWidget {
                             shadowColor: Colors.transparent,
                           ),
                           onPressed: () {
-                            // Handle Google login
+                            // Handle Google login................................
                           },
                           icon: Image.asset('assets/Google.png', height: 24.0),
                           label: const Text('Continue with Google'),
@@ -121,7 +121,7 @@ class LoginScreen extends StatelessWidget {
                             shadowColor: Colors.transparent,
                           ),
                           onPressed: () {
-                            // Handle Facebook login
+                            // Handle Facebook login.............................
                           },
                           icon: Image.asset('assets/Facebook.png', height: 24.0),
                           label: const Text('Continue with Facebook'),

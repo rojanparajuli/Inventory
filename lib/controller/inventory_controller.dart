@@ -1,36 +1,41 @@
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
+import 'package:inventory/data/database_helper.dart';
 import 'package:inventory/model/items_model.dart';
 
 class ItemController extends GetxController {
   var items = <Item>[].obs;
-  final storage = GetStorage();
+  final dbHelper = DatabaseHelper();
 
   @override
   void onInit() {
     super.onInit();
-    _loadItems();
+    loadItems();
   }
 
-  void _loadItems() {
-    List<dynamic>? storedItems = storage.read<List>('items');
-    if (storedItems != null) {
-      items.value = storedItems.map((item) => Item.fromJson(item)).toList();
+  void loadItems() async {
+    final List<Map<String, dynamic>> maps = await dbHelper.getItems();
+    items.value = maps.map((item) => Item.fromMap(item)).toList();
+  }
+
+  void addItem(String name, int quantity) async {
+    final item = Item(id: 0, name: name, quantity: quantity);
+    await dbHelper.insertItem(item.toMap());
+    loadItems();
+  }
+
+  void deleteItem(int id) async {
+    await dbHelper.deleteItem(id);
+    loadItems();
+  }
+
+  void sellItem(int id, int quantitySold) async {
+    final item = items.firstWhere((item) => item.id == id);
+    if (item.quantity >= quantitySold) {
+      item.quantity -= quantitySold;
+      await dbHelper.updateItem(item.toMap());
+      loadItems();
+    } else {
+      Get.snackbar("Error", "Not enough quantity to sell");
     }
-  }
-
-  void _saveItems() {
-    storage.write('items', items.map((item) => item.toJson()).toList());
-  }
-
-  void addItem(String name, int quantity) {
-    int id = DateTime.now().millisecondsSinceEpoch;
-    items.add(Item(id: id, name: name, quantity: quantity));
-    _saveItems();
-  }
-
-  void deleteItem(int id) {
-    items.removeWhere((item) => item.id == id);
-    _saveItems();
   }
 }

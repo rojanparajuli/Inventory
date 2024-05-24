@@ -1,24 +1,19 @@
-
 class Item {
-  final int id;
-  final String name;
-  final int quantity;
+  int id;
+  String name;
+  int quantity;
 
   Item({required this.id, required this.name, required this.quantity});
 
-  factory Item.fromJson(Map<String, dynamic> json) {
-    return Item(
-      id: json['id'] as int,
-      name: json['name'] as String,
-      quantity: json['quantity'] as int,
-    );
-  }
+  factory Item.fromMap(Map<String, dynamic> json) => Item(
+        id: json["id"],
+        name: json["name"],
+        quantity: json["quantity"],
+      );
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'quantity': quantity,
-    };
-  }
+  Map<String, dynamic> toMap() => {
+        "id": id,
+        "name": name,
+        "quantity": quantity,
+      };
 }

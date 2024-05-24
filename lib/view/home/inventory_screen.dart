@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:inventory/controller/inventory_controller.dart';
+import 'package:inventory/model/items_model.dart';
 import 'package:inventory/view/items/items_screen.dart';
-
 
 class InventoryPage extends StatelessWidget {
   final ItemController itemController = Get.put(ItemController());
@@ -55,7 +55,7 @@ class InventoryPage extends StatelessWidget {
                 }
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue, // Change button color to blue
+                backgroundColor: Colors.blue,
               ),
               child: const Text('Add Item'),
             ),
@@ -74,11 +74,22 @@ class InventoryPage extends StatelessWidget {
                         title: Text('ID: ${item.id} - ${item.name}'),
                         subtitle: Text('Quantity: ${item.quantity}'),
                         onTap: () {
-                          Get.to(ItemDetailsPage(item: item));
+                          Get.to(() => ItemDetailsPage(item: item));
                         },
-                        trailing: IconButton(
-                          icon: const Icon(Icons.delete),
-                          onPressed: () => itemController.deleteItem(item.id),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.delete),
+                              onPressed: () => itemController.deleteItem(item.id),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.sell),
+                              onPressed: () {
+                                _showSellDialog(context, item);
+                              },
+                            ),
+                          ],
                         ),
                       );
                     },
@@ -89,6 +100,50 @@ class InventoryPage extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  void _showSellDialog(BuildContext context, Item item) {
+    final TextEditingController sellQuantityController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Sell Item'),
+          content: TextField(
+            controller: sellQuantityController,
+            decoration: const InputDecoration(labelText: 'Quantity to Sell'),
+            keyboardType: TextInputType.number,
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                final quantityToSell = int.tryParse(sellQuantityController.text) ?? 0;
+                if (quantityToSell > 0 && quantityToSell <= item.quantity) {
+                  itemController.sellItem(item.id, quantityToSell);
+                  sellQuantityController.clear();
+                  Navigator.of(context).pop();
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Invalid quantity to sell'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              },
+              child: const Text('Sell'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
