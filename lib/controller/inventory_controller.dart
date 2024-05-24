@@ -28,8 +28,14 @@ class ItemController extends GetxController {
     loadItems();
   }
 
-  void sellItem(int id, int quantitySold) async {
-    final item = items.firstWhere((item) => item.id == id);
+ void sellItem(int? id, int quantitySold) async {
+  if (id == null) {
+    Get.snackbar("Error", "Invalid item ID");
+    return;
+  }
+
+  final item = items.firstWhere((item) => item.id == id, orElse: () => Item(id: 0, name: "", quantity: 0));
+  if (item.id != 0) {
     if (item.quantity >= quantitySold) {
       item.quantity -= quantitySold;
       await dbHelper.updateItem(item.toMap());
@@ -37,5 +43,8 @@ class ItemController extends GetxController {
     } else {
       Get.snackbar("Error", "Not enough quantity to sell");
     }
+  } else {
+    Get.snackbar("Error", "Item not found");
   }
+}
 }

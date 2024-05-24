@@ -81,7 +81,36 @@ class InventoryPage extends StatelessWidget {
                           children: [
                             IconButton(
                               icon: const Icon(Icons.delete),
-                              onPressed: () => itemController.deleteItem(item.id),
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: const Text("Confirm Deletion"),
+                                      content: const Text(
+                                          "Are you sure you want to delete this item from inventory?"),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          child: const Text("Cancel"),
+                                          onPressed: () {
+                                            Navigator.of(context)
+                                                .pop(); // Close the dialog
+                                          },
+                                        ),
+                                        TextButton(
+                                          child: const Text("Delete"),
+                                          onPressed: () {
+                                            Navigator.of(context)
+                                                .pop(); 
+                                            itemController.deleteItem(item
+                                                .id); 
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
                             ),
                             IconButton(
                               icon: const Icon(Icons.sell),
@@ -104,8 +133,8 @@ class InventoryPage extends StatelessWidget {
   }
 
   void _showSellDialog(BuildContext context, Item item) {
-    final TextEditingController sellQuantityController = TextEditingController();
-
+    final TextEditingController sellQuantityController =
+        TextEditingController();
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -125,7 +154,8 @@ class InventoryPage extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                final quantityToSell = int.tryParse(sellQuantityController.text) ?? 0;
+                final quantityToSell =
+                    int.tryParse(sellQuantityController.text) ?? 0;
                 if (quantityToSell > 0 && quantityToSell <= item.quantity) {
                   itemController.sellItem(item.id, quantityToSell);
                   sellQuantityController.clear();
