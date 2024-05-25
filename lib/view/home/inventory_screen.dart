@@ -8,6 +8,7 @@ class InventoryPage extends StatelessWidget {
   final ItemController itemController = Get.put(ItemController());
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
+  final TextEditingController _priceController = TextEditingController();
 
   InventoryPage({super.key});
 
@@ -43,15 +44,25 @@ class InventoryPage extends StatelessWidget {
                 keyboardType: TextInputType.number,
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                controller: _priceController,
+                decoration: const InputDecoration(labelText: 'Selling Price'),
+                keyboardType: TextInputType.number,
+              ),
+            ),
             ElevatedButton(
               onPressed: () {
                 final name = _nameController.text;
                 final quantity = int.tryParse(_quantityController.text) ?? 0;
+                final price = double.tryParse(_priceController.text) ?? 0.0;
 
-                if (name.isNotEmpty) {
-                  itemController.addItem(name, quantity);
+                if (name.isNotEmpty && quantity > 0 && price > 0.0) {
+                  itemController.addItem(name, quantity, price);
                   _nameController.clear();
                   _quantityController.clear();
+                  _priceController.clear();
                 }
               },
               style: ElevatedButton.styleFrom(
@@ -87,23 +98,19 @@ class InventoryPage extends StatelessWidget {
                                   builder: (BuildContext context) {
                                     return AlertDialog(
                                       title: const Text("Confirm Deletion"),
-                                      content: const Text(
-                                          "Are you sure you want to delete this item from inventory?"),
+                                      content: const Text("Are you sure you want to delete this item from inventory?"),
                                       actions: <Widget>[
                                         TextButton(
                                           child: const Text("Cancel"),
                                           onPressed: () {
-                                            Navigator.of(context)
-                                                .pop(); // Close the dialog
+                                            Navigator.of(context).pop();
                                           },
                                         ),
                                         TextButton(
                                           child: const Text("Delete"),
                                           onPressed: () {
-                                            Navigator.of(context)
-                                                .pop(); 
-                                            itemController.deleteItem(item
-                                                .id); 
+                                            Navigator.of(context).pop();
+                                            itemController.deleteItem(item.id);
                                           },
                                         ),
                                       ],
@@ -133,17 +140,28 @@ class InventoryPage extends StatelessWidget {
   }
 
   void _showSellDialog(BuildContext context, Item item) {
-    final TextEditingController sellQuantityController =
-        TextEditingController();
+    final TextEditingController sellQuantityController = TextEditingController();
+    final TextEditingController sellPriceController = TextEditingController();
+    
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Sell Item'),
-          content: TextField(
-            controller: sellQuantityController,
-            decoration: const InputDecoration(labelText: 'Quantity to Sell'),
-            keyboardType: TextInputType.number,
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: sellQuantityController,
+                decoration: const InputDecoration(labelText: 'Quantity to Sell'),
+                keyboardType: TextInputType.number,
+              ),
+              TextField(
+                controller: sellPriceController,
+                decoration: const InputDecoration(labelText: 'Selling Price'),
+                keyboardType: TextInputType.number,
+              ),
+            ],
           ),
           actions: <Widget>[
             TextButton(
@@ -154,16 +172,18 @@ class InventoryPage extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                final quantityToSell =
-                    int.tryParse(sellQuantityController.text) ?? 0;
-                if (quantityToSell > 0 && quantityToSell <= item.quantity) {
+                final quantityToSell = int.tryParse(sellQuantityController.text) ?? 0;
+                final sellingPrice = double.tryParse(sellPriceController.text) ?? 0.0;
+
+                if (quantityToSell > 0 && quantityToSell <= item.quantity && sellingPrice > 0.0) {
                   itemController.sellItem(item.id, quantityToSell);
                   sellQuantityController.clear();
+                  sellPriceController.clear();
                   Navigator.of(context).pop();
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text('Invalid quantity to sell'),
+                      content: Text('Invalid quantity or price'),
                       backgroundColor: Colors.red,
                     ),
                   );
