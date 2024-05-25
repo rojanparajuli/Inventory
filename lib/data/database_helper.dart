@@ -19,8 +19,9 @@ class DatabaseHelper {
     String path = join(await getDatabasesPath(), 'inventory.db');
     return openDatabase(
       path,
-      version: 1,
+      version: 2, // Incremented version to trigger onUpgrade
       onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
     );
   }
 
@@ -29,9 +30,16 @@ class DatabaseHelper {
     CREATE TABLE items (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT,
-      quantity INTEGER
+      quantity INTEGER,
+      sellingPrice REAL
     )
     ''');
+  }
+
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await db.execute('ALTER TABLE items ADD COLUMN sellingPrice REAL');
+    }
   }
 
   Future<List<Map<String, dynamic>>> getItems() async {
@@ -52,5 +60,18 @@ class DatabaseHelper {
   Future<int> deleteItem(int id) async {
     Database db = await database;
     return db.delete('items', where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<int> sellItem(int id, int quantityToSell) async {
+    Database db = await database;
+    Map<String, dynamic> item = (await db.query('items', where: 'id = ?', whereArgs: [id])).first;
+    int newQuantity = item['quantity'] - quantityToSell;
+
+    if (newQuantity >= 0) {
+      item['quantity'] = newQuantity;
+      return await updateItem(item);
+    } else {
+      throw Exception('Not enough items in stock to sell');
+    }
   }
 }
