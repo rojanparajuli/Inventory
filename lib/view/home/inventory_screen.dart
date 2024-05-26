@@ -81,8 +81,15 @@ class InventoryPage extends StatelessWidget {
                     itemCount: itemController.items.length,
                     itemBuilder: (context, index) {
                       final item = itemController.items[index];
-                      return Obx(()=> Container(
-                          color: itemController.items.isNotEmpty && index < itemController.outOfStockStatuses.length && itemController.outOfStockStatuses[index] ? Colors.red: Colors.transparent,
+                      return Obx(
+                        () => Container(
+                          color: itemController.items.isNotEmpty &&
+                                  index <
+                                      itemController
+                                          .outOfStockStatuses.length &&
+                                  itemController.outOfStockStatuses[index]
+                              ? Colors.red
+                              : Colors.transparent,
                           child: ListTile(
                             title: Text('ID: ${item.id} - ${item.name}'),
                             subtitle: Text('Quantity: ${item.quantity}'),
@@ -99,8 +106,17 @@ class InventoryPage extends StatelessWidget {
                                       context: context,
                                       builder: (BuildContext context) {
                                         return AlertDialog(
-                                          title: itemController.outOfStockStatuses[index] ? const Text('Confirm Restock') : const Text("Confirm Out Of Stock"),
-                                          content: itemController.outOfStockStatuses[index] ? const Text('Are you sure this item is Restock') : const Text("Are you sure this item is out of stock?"),
+                                          title: itemController
+                                                  .outOfStockStatuses[index]
+                                              ? const Text('Confirm Restock')
+                                              : const Text(
+                                                  "Confirm Out Of Stock"),
+                                          content: itemController
+                                                  .outOfStockStatuses[index]
+                                              ? const Text(
+                                                  'Are you sure this item is Restock')
+                                              : const Text(
+                                                  "Are you sure this item is out of stock?"),
                                           actions: <Widget>[
                                             TextButton(
                                               child: const Text("Cancel"),
@@ -112,8 +128,10 @@ class InventoryPage extends StatelessWidget {
                                               child: const Text("Yes"),
                                               onPressed: () {
                                                 Navigator.of(context).pop();
-                                                itemController.toggleOutOfStock(index);
-                                                print(itemController.outOfStockStatuses);
+                                                itemController
+                                                    .toggleOutOfStock(index);
+                                                print(itemController
+                                                    .outOfStockStatuses);
                                               },
                                             ),
                                           ],
@@ -145,9 +163,10 @@ class InventoryPage extends StatelessWidget {
   }
 
   void _showSellDialog(BuildContext context, Item item) {
-    final TextEditingController sellQuantityController = TextEditingController();
+    final TextEditingController sellQuantityController =
+        TextEditingController();
     final TextEditingController sellPriceController = TextEditingController();
-    
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -158,7 +177,8 @@ class InventoryPage extends StatelessWidget {
             children: [
               TextField(
                 controller: sellQuantityController,
-                decoration: const InputDecoration(labelText: 'Quantity to Sell'),
+                decoration:
+                    const InputDecoration(labelText: 'Quantity to Sell'),
                 keyboardType: TextInputType.number,
               ),
               TextField(
@@ -177,10 +197,14 @@ class InventoryPage extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                final quantityToSell = int.tryParse(sellQuantityController.text) ?? 0;
-                final sellingPrice = double.tryParse(sellPriceController.text) ?? 0.0;
+                final quantityToSell =
+                    int.tryParse(sellQuantityController.text) ?? 0;
+                final sellingPrice =
+                    double.tryParse(sellPriceController.text) ?? 0.0;
 
-                if (quantityToSell > 0 && quantityToSell <= item.quantity && sellingPrice > 0.0) {
+                if (quantityToSell > 0 &&
+                    quantityToSell <= item.quantity &&
+                    sellingPrice > 0.0) {
                   itemController.sellItem(item.id ?? 0, quantityToSell);
                   sellQuantityController.clear();
                   sellPriceController.clear();

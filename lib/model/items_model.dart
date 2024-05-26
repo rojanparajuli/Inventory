@@ -16,7 +16,7 @@ class Item {
       id: json['id'],
       name: json['name'],
       quantity: json['quantity'],
-      sellingPrice: json['sellingPrice'],
+      sellingPrice: json['sellingPrice'] != null ? (json['sellingPrice'] as num).toDouble() : 0.0,
     );
   }
 

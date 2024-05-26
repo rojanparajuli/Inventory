@@ -5,6 +5,7 @@ import 'package:inventory/model/items_model.dart';
 class ItemController extends GetxController {
   var items = <Item>[].obs;
   var outOfStockStatuses = <bool>[].obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -43,13 +44,18 @@ class ItemController extends GetxController {
   }
 
   void _initializeOutOfStockStates() {
-    outOfStockStatuses.value = List<bool>.filled(items.length, false); 
+    outOfStockStatuses.value = items.map((item) => item.quantity == 0).toList();
   }
 
-   void toggleOutOfStock(int index) {
-  
- if (index >= 0 && index < outOfStockStatuses.length) {
+  void toggleOutOfStock(int index) {
+    if (index >= 0 && index < outOfStockStatuses.length) {
       outOfStockStatuses[index] = !outOfStockStatuses[index];
     }
   }
+
+  int get totalQuantity => items.fold(0, (sum, item) => sum + item.quantity);
+  
+  double get totalWorth => items.fold(0.0, (sum, item) => sum + (item.sellingPrice * item.quantity));
+  
+  int get totalSell => items.fold(0, (sum, item) => sum + item.quantity); 
 }
