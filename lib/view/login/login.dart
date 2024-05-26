@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:inventory/controller/login_controller.dart';
-import 'package:inventory/view/home/inventory_screen.dart';
+import 'package:inventory/view/navigation/navigation.dart';
 
 class LoginScreen extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
@@ -76,7 +76,7 @@ class LoginScreen extends StatelessWidget {
                         ),
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
-                            Get.to(() => InventoryPage());
+                            Get.to(() =>  FirstNavigation());
                           }
                         },
                         child: const Text('Login', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
