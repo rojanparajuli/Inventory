@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:inventory/view/login/login.dart';
 
 void main() {
+  
   runApp(const MyApp());
 }
 

@@ -1,11 +1,11 @@
 class Item {
-  final int id;
-  final String name;
+  int? id;
+  String name;
   int quantity;
   double sellingPrice;
 
   Item({
-    required this.id,
+    this.id,
     required this.name,
     required this.quantity,
     required this.sellingPrice,

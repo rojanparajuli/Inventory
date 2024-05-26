@@ -19,7 +19,7 @@ class DatabaseHelper {
     String path = join(await getDatabasesPath(), 'inventory.db');
     return openDatabase(
       path,
-      version: 2, // Incremented version to trigger onUpgrade
+      version: 2, 
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );

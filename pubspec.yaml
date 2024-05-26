@@ -44,6 +44,7 @@ dependencies:
   barcode: ^2.2.8
   shared_preferences: ^2.2.3
   flutter_svg: ^2.0.10+1
+  uuid: ^4.4.0
 
 dev_dependencies:
   flutter_test:
