@@ -81,51 +81,56 @@ class InventoryPage extends StatelessWidget {
                     itemCount: itemController.items.length,
                     itemBuilder: (context, index) {
                       final item = itemController.items[index];
-                      return ListTile(
-                        title: Text('ID: ${item.id} - ${item.name}'),
-                        subtitle: Text('Quantity: ${item.quantity}'),
-                        onTap: () {
-                          Get.to(() => ItemDetailsPage(item: item));
-                        },
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.delete),
-                              onPressed: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: const Text("Confirm Deletion"),
-                                      content: const Text("Are you sure you want to delete this item from inventory?"),
-                                      actions: <Widget>[
-                                        TextButton(
-                                          child: const Text("Cancel"),
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                        ),
-                                        TextButton(
-                                          child: const Text("Delete"),
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                            itemController.deleteItem(item.id);
-                                          },
-                                        ),
-                                      ],
+                      return Obx(()=> Container(
+                          color: itemController.items.isNotEmpty && index < itemController.outOfStockStatuses.length && itemController.outOfStockStatuses[index] ? Colors.red: Colors.transparent,
+                          child: ListTile(
+                            title: Text('ID: ${item.id} - ${item.name}'),
+                            subtitle: Text('Quantity: ${item.quantity}'),
+                            onTap: () {
+                              Get.to(() => ItemDetailsPage(item: item));
+                            },
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.inventory),
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: itemController.outOfStockStatuses[index] ? const Text('Confirm Restock') : const Text("Confirm Out Of Stock"),
+                                          content: itemController.outOfStockStatuses[index] ? const Text('Are you sure this item is Restock') : const Text("Are you sure this item is out of stock?"),
+                                          actions: <Widget>[
+                                            TextButton(
+                                              child: const Text("Cancel"),
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                            ),
+                                            TextButton(
+                                              child: const Text("Yes"),
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                                itemController.toggleOutOfStock(index);
+                                                print(itemController.outOfStockStatuses);
+                                              },
+                                            ),
+                                          ],
+                                        );
+                                      },
                                     );
                                   },
-                                );
-                              },
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.sell),
+                                  onPressed: () {
+                                    _showSellDialog(context, item);
+                                  },
+                                ),
+                              ],
                             ),
-                            IconButton(
-                              icon: const Icon(Icons.sell),
-                              onPressed: () {
-                                _showSellDialog(context, item);
-                              },
-                            ),
-                          ],
+                          ),
                         ),
                       );
                     },
@@ -176,7 +181,7 @@ class InventoryPage extends StatelessWidget {
                 final sellingPrice = double.tryParse(sellPriceController.text) ?? 0.0;
 
                 if (quantityToSell > 0 && quantityToSell <= item.quantity && sellingPrice > 0.0) {
-                  itemController.sellItem(item.id, quantityToSell);
+                  itemController.sellItem(item.id ?? 0, quantityToSell);
                   sellQuantityController.clear();
                   sellPriceController.clear();
                   Navigator.of(context).pop();

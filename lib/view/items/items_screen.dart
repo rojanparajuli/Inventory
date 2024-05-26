@@ -74,7 +74,7 @@ class ItemDetailsPage extends StatelessWidget {
                 final sellingPrice = double.tryParse(priceController.text) ?? 0.0;
 
                 if (quantityToSell > 0 && sellingPrice > 0.0) {
-                  itemController.sellItem(item.id, quantityToSell, );
+                  itemController.sellItem(item.id ?? 0, quantityToSell, );
                   quantityController.clear();
                   priceController.clear();
                   Navigator.pop(context);
