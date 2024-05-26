@@ -16,13 +16,13 @@ class FirstNavigation extends StatelessWidget {
       body: Obx(() {
         switch (navigationController.selectedIndex.value) {
           case 0:
-            return const Dashboard();
+            return  Dashboard();
           case 1:
             return  InventoryPage();
           case 2:
             return const Cartscreen();
           default:
-            return const Dashboard();
+            return  Dashboard();
         }
       }),
       bottomNavigationBar: Obx(() => BottomNavigationBar(
