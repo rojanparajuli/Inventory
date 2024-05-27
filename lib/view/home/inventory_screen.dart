@@ -16,7 +16,7 @@ class InventoryPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Center(child: Text('Dashboard')),
+        title: const Center(child: Text('Your Inventory')),
         automaticallyImplyLeading: false,
       ),
       body: Container(
@@ -24,7 +24,7 @@ class InventoryPage extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Colors.white, Colors.teal],
+            colors: [Colors.white, Colors.blue],
           ),
         ),
         child: Column(
@@ -92,7 +92,8 @@ class InventoryPage extends StatelessWidget {
                               : Colors.transparent,
                           child: ListTile(
                             title: Text('ID: ${item.id} - ${item.name}'),
-                            subtitle: Text('Quantity: ${item.quantity}'),
+                            subtitle: Text('Quantity: ${item.quantity} price : ${item.sellingPrice}'),
+                            
                             onTap: () {
                               Get.to(() => ItemDetailsPage(item: item));
                             },
